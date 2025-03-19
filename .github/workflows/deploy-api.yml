@@ -1,0 +1,42 @@
+name: Deploy API
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+        description: 'Environment to deploy to (staging or production)'
+      version:
+        required: false
+        type: string
+        description: 'Version being deployed (optional)'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  deploy:
+    name: Deploy to ${{ github.event_name == 'workflow_call' && inputs.environment || github.event.inputs.environment }}
+    runs-on: ubuntu-latest
+    env:
+      DEPLOY_ENV: ${{ github.event_name == 'workflow_call' && inputs.environment || github.event.inputs.environment }}
+    
+    steps:
+      - name: Mock Deploy
+        run: |
+          echo "🚀 Starting mock deployment to ${{ env.DEPLOY_ENV }} environment"
+          echo "📦 Repository: ${{ github.repository }}"
+          echo "🔄 Workflow: ${{ github.workflow }}"
+          echo "🌳 Branch: ${{ github.ref_name }}"
+          echo "📝 Commit: ${{ github.sha }}"
+          VERSION=$(node -p "require('./package.json').version")
+          echo "📌 Version from package.json: $VERSION"
+          echo "⏳ Simulating deployment..."
+          echo "✅ Mock deployment to ${{ env.DEPLOY_ENV }} complete!" 
