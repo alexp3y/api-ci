@@ -1,31 +1,34 @@
 const { version } = require('../package.json');
 
+// Create a mock app object that we'll provide to Express
+const mockApp = {
+  use: jest.fn(),
+  get: jest.fn(),
+  listen: jest.fn((port, callback) => {
+    callback && callback();
+    return mockApp;
+  }),
+};
+
 // Mock Express
 jest.mock('express', () => {
-  const mockApp = {
-    use: jest.fn(),
-    get: jest.fn(),
-    listen: jest.fn((port, callback) => {
-      callback();
-      return mockApp;
-    }),
-  };
-
-  const mockExpress = () => mockApp;
+  // Return a function that returns our mockApp
+  const mockExpress = jest.fn(() => mockApp);
   mockExpress.json = jest.fn();
 
   return mockExpress;
 });
 
-// Mock console.log
+// Mock console.log to prevent output during tests
 console.log = jest.fn();
 
 describe('API Server', () => {
-  let app;
-
   beforeEach(() => {
     jest.clearAllMocks();
-    app = require('./index');
+    // Clear the module cache so we get a fresh instance
+    jest.resetModules();
+    // Load the index.js file which will use our mocked Express
+    require('./index');
   });
 
   it('should log server start with correct version', () => {
@@ -33,9 +36,7 @@ describe('API Server', () => {
   });
 
   it('should set up routes', () => {
-    const express = require('express');
-    const mockApp = express();
-
+    // Here we use the same mockApp that was provided to index.js
     expect(mockApp.get).toHaveBeenCalledTimes(3);
 
     // Root route

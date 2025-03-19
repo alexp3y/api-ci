@@ -1,0 +1,12 @@
+name: Sync Dev to Staging
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-staging:
+    name: Deploy to Staging
+    uses: ./.github/workflows/deploy-api.yml
+    with:
+      environment: staging
