@@ -19,12 +19,15 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to ${{ github.event_name == 'workflow_call' && inputs.environment || github.event.inputs.environment }}
+    name: Deploy to ${{ inputs.environment }}
     runs-on: ubuntu-latest
     env:
-      DEPLOY_ENV: ${{ github.event_name == 'workflow_call' && inputs.environment || github.event.inputs.environment }}
+      DEPLOY_ENV: ${{ inputs.environment }}
     
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
       - name: Mock Deploy
         run: |
           echo "🚀 Starting mock deployment to ${{ env.DEPLOY_ENV }} environment"
