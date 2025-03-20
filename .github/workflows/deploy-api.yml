@@ -7,10 +7,6 @@ on:
         required: true
         type: string
         description: 'Environment to deploy to (staging or production)'
-      version:
-        required: false
-        type: string
-        description: 'Version being deployed (optional)'
   workflow_dispatch:
     inputs:
       environment:
